@@ -1,7 +1,7 @@
 # Architecture Proposal
 
 ## 1. Technology Stack
-* **Frontend:** Next.js (App Router), React, TypeScript, Tailwind CSS, shadcn/ui or Radix (for unstyled accessible primitives).
+* **Frontend:** Next.js (App Router), React, TypeScript, Tailwind CSS. We will use **Custom Tailwind Components** exclusively. No shadcn/ui or external UI libraries will be used to ensure strict adherence to the visual reference.
 * **State Management:** React Context + Zustand (for complex local state like billing engine), React Query (for server state).
 * **Backend:** Next.js Route Handlers (API layer).
 * **Database:** PostgreSQL (relational integrity required for financial logic).

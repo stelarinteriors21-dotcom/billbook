@@ -10,10 +10,14 @@ This roadmap defines the execution phases to build the application as requested 
 * [x] Create initial architecture proposal (`ARCHITECTURE.md`).
 * [ ] Initialize Next.js project.
 
-## PHASE 1: Architecture + Database Foundation
-* Set up Next.js with Tailwind, TypeScript, and Prisma.
-* Implement database schema (Business, User, Party, Item, Invoice, Ledger, Inventory).
-* Configure multi-tenancy rules and authorization layer.
+## PHASE 1: Architecture + Sales Billing MVP (Current Priority)
+* Project setup (Next.js, Tailwind, TS, Prisma, PostgreSQL).
+* Foundational Documentation (Schema, Invariants, Design System).
+* Prisma Schema foundation for core entities.
+* Custom UI Primitives extraction.
+* **The MVP Vertical Slice:** 
+  - Login -> Business Selection -> Dashboard -> Party Create/Search -> Item Create/Search -> Create Sales Invoice -> GST/Discount -> Payment -> Save -> Invoice History.
+* This is the absolute priority to deliver a real, database-backed, functionally usable billing application first.
 
 ## PHASE 2: Authentication + Business Onboarding
 * Implement NextAuth for login/logout and session management.
