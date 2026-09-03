@@ -164,6 +164,13 @@ export function InvoiceForm({
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [saveSuccessMsg, setSaveSuccessMsg] = React.useState("")
 
+  React.useEffect(() => {
+    if (!initialData?.bankDetails && typeof window !== "undefined") {
+      const savedBank = localStorage.getItem("defaultBankDetails")
+      if (savedBank) setBankDetails(savedBank)
+    }
+  }, [initialData])
+
   // Sync state whenever initialData changes
   React.useEffect(() => {
     if (!initialData) return
@@ -479,6 +486,10 @@ export function InvoiceForm({
 
       const data = await response.json()
       if (data.success) {
+        if (bankDetails) {
+          localStorage.setItem("defaultBankDetails", bankDetails)
+        }
+        
         if (saveAndNew && !isEdit) {
           setSaveSuccessMsg("Invoice created successfully! Ready for next invoice.")
           setTimeout(() => setSaveSuccessMsg(""), 4000)
