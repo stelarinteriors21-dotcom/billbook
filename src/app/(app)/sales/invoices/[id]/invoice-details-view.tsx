@@ -27,6 +27,8 @@ export function InvoiceDetailsView({ invoice: initialInvoice, taxRates = [] }: I
   const [isEditingItems, setIsEditingItems] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
   const [isDeleting, setIsDeleting] = React.useState(false)
+  const [confirmDelete, setConfirmDelete] = React.useState(false)
+  const [deleteError, setDeleteError] = React.useState("")
   const [saveSuccessMsg, setSaveSuccessMsg] = React.useState("")
 
   // Editable lines state
@@ -218,11 +220,8 @@ export function InvoiceDetailsView({ invoice: initialInvoice, taxRates = [] }: I
   }
 
   const handleDeleteInvoice = async () => {
-    if (!confirm(`Are you sure you want to permanently delete Invoice ${invoice.invoiceNumber}? This action cannot be undone.`)) {
-      return
-    }
-
     setIsDeleting(true)
+    setDeleteError("")
     try {
       const res = await fetch(`/api/sales/invoices/${invoice.id}`, { method: "DELETE" })
       const data = await res.json()
@@ -230,12 +229,14 @@ export function InvoiceDetailsView({ invoice: initialInvoice, taxRates = [] }: I
         router.push("/sales/invoices")
         router.refresh()
       } else {
-        alert(data.error || "Failed to delete invoice")
+        setDeleteError(data.error || "Failed to delete invoice")
         setIsDeleting(false)
+        setConfirmDelete(false)
       }
     } catch {
-      alert("Error deleting invoice")
+      setDeleteError("Network error — could not delete invoice")
       setIsDeleting(false)
+      setConfirmDelete(false)
     }
   }
 
@@ -297,21 +298,48 @@ export function InvoiceDetailsView({ invoice: initialInvoice, taxRates = [] }: I
           </Link>
 
 
-          <button
-            type="button"
-            onClick={handleDeleteInvoice}
-            disabled={isDeleting}
-            className="flex items-center gap-1.5 bg-white text-red-600 border border-red-200 px-3.5 py-1.5 rounded-md text-sm font-semibold hover:bg-red-50 transition-colors disabled:opacity-50"
-            title="Delete this invoice"
-          >
-            <Trash2 className="h-4 w-4" /> {isDeleting ? "Deleting..." : "Delete"}
-          </button>
+          {!confirmDelete ? (
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              className="flex items-center gap-1.5 bg-white text-red-600 border border-red-200 px-3.5 py-1.5 rounded-md text-sm font-semibold hover:bg-red-50 transition-colors"
+              title="Delete this invoice"
+            >
+              <Trash2 className="h-4 w-4" /> Delete
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-md px-3 py-1.5">
+              <span className="text-xs font-semibold text-red-700">Sure?</span>
+              <button
+                type="button"
+                onClick={handleDeleteInvoice}
+                disabled={isDeleting}
+                className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2.5 py-1 rounded disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                className="text-xs font-semibold text-gray-600 hover:text-gray-900 px-2 py-1 rounded hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {saveSuccessMsg && (
         <div className="mx-4 mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-xs font-semibold flex items-center gap-2 print:hidden">
           <Check className="h-4 w-4" /> {saveSuccessMsg}
+        </div>
+      )}
+
+      {deleteError && (
+        <div className="mx-4 mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs font-semibold flex items-center justify-between print:hidden">
+          <span>❌ {deleteError}</span>
+          <button onClick={() => setDeleteError("")} className="ml-2 text-red-400 hover:text-red-600">✕</button>
         </div>
       )}
 
