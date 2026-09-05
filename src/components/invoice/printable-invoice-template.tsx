@@ -76,9 +76,6 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
                 <span className="font-bold">Email :</span> {companyEmail}
               </p>
               <p>
-                <span className="font-bold">PAN Number :</span> {companyPan}
-              </p>
-              <p>
                 <span className="font-bold">stelar.in:</span> www.stelar.in
               </p>
             </div>
@@ -144,11 +141,6 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
             {party.gstin && (
               <p>
                 <span className="font-bold">GSTIN :</span> {party.gstin}
-              </p>
-            )}
-            {party.gstin && (
-              <p>
-                <span className="font-bold">PAN Number :</span> {party.gstin.substring(2, 12)}
               </p>
             )}
             <p>

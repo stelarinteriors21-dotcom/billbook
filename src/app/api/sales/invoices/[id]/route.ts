@@ -168,8 +168,26 @@ export async function DELETE(
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 })
     }
 
-    await db.invoice.delete({
-      where: { id },
+    // Delete all related records in the correct order to avoid FK constraint errors
+    await db.$transaction(async (tx) => {
+      // 1. Delete ledger entries referencing this invoice
+      await tx.ledgerEntry.deleteMany({ where: { referenceId: id } })
+
+      // 2. Delete payments referencing this invoice and their ledger entries
+      const payments = await tx.payment.findMany({ where: { invoiceId: id }, select: { id: true } })
+      for (const p of payments) {
+        await tx.ledgerEntry.deleteMany({ where: { referenceId: p.id } })
+      }
+      await tx.payment.deleteMany({ where: { invoiceId: id } })
+
+      // 3. Delete stock movements referencing this invoice
+      await tx.stockMovement.deleteMany({ where: { referenceId: id } })
+
+      // 4. Delete invoice line items (cascade would handle this too, but explicit is safer)
+      await tx.invoiceLineItem.deleteMany({ where: { invoiceId: id } })
+
+      // 5. Finally delete the invoice itself
+      await tx.invoice.delete({ where: { id } })
     })
 
     return NextResponse.json({ success: true, message: "Invoice deleted successfully" })
