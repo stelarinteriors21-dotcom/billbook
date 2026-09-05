@@ -146,6 +146,15 @@ export async function POST(req: NextRequest) {
           where: { businessId: session.user.businessId }
         })
       }
+      if (!godown) {
+        godown = await tx.godown.create({
+          data: {
+            businessId: session.user.businessId,
+            name: "Main Godown",
+            isDefault: true
+          }
+        })
+      }
 
       for (const line of processedLines) {
         const item = await tx.item.findUnique({ where: { id: line.itemId } })

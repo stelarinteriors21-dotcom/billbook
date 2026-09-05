@@ -188,24 +188,58 @@ export async function POST(req: Request) {
         })
       }
 
+      // Fetch items to know if they are PRODUCT or SERVICE
+      const itemIds = parsed.lines.map(l => l.itemId)
+      const items = await tx.item.findMany({
+        where: { id: { in: itemIds }, businessId }
+      })
+      const itemTypeMap = new Map(items.map(i => [i.id, i.itemType]))
+
       // Stock Movement (Inventory FIFO / Reduction)
-      // Since parsed.lines has godownId, we use it directly
       for (let i = 0; i < invoice.lines.length; i++) {
         const dbLine = invoice.lines[i];
         const parsedLine = parsed.lines[i];
-        await tx.stockMovement.create({
-          data: {
-            businessId,
-            itemId: dbLine.itemId,
-            godownId: parsedLine.godownId,
-            type: MovementType.OUT, // Sales reduces stock
-            quantity: parsedLine.quantity,
-            date: invoice.date,
-            referenceType: 'SALES_INVOICE',
-            referenceId: invoice.id,
-            createdById: userId
+        
+        // Only track stock for PRODUCTS
+        if (itemTypeMap.get(dbLine.itemId) === "PRODUCT") {
+          let targetGodownId = parsedLine.godownId;
+          
+          // Auto-create/fallback godown if empty
+          if (!targetGodownId) {
+            let defaultGodown = await tx.godown.findFirst({
+              where: { businessId, isDefault: true }
+            })
+            if (!defaultGodown) {
+               defaultGodown = await tx.godown.findFirst({
+                 where: { businessId }
+               })
+            }
+            if (!defaultGodown) {
+               defaultGodown = await tx.godown.create({
+                 data: {
+                   businessId,
+                   name: "Main Godown",
+                   isDefault: true
+                 }
+               })
+            }
+            targetGodownId = defaultGodown.id;
           }
-        })
+
+          await tx.stockMovement.create({
+            data: {
+              businessId,
+              itemId: dbLine.itemId,
+              godownId: targetGodownId,
+              type: MovementType.OUT,
+              quantity: parsedLine.quantity,
+              date: invoice.date,
+              referenceType: 'SALES_INVOICE',
+              referenceId: invoice.id,
+              createdById: userId
+            }
+          })
+        }
       }
 
       return invoice

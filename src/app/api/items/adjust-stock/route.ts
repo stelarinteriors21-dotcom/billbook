@@ -25,11 +25,22 @@ export async function POST(req: Request) {
 
     let godownId = parsed.godownId
     if (!godownId) {
-      const defaultGodown = await db.godown.findFirst({
-        where: { businessId: session.user.businessId }
+      let defaultGodown = await db.godown.findFirst({
+        where: { businessId: session.user.businessId, isDefault: true }
       })
       if (!defaultGodown) {
-        return NextResponse.json({ error: "No godown found" }, { status: 400 })
+        defaultGodown = await db.godown.findFirst({
+          where: { businessId: session.user.businessId }
+        })
+      }
+      if (!defaultGodown) {
+        defaultGodown = await db.godown.create({
+          data: {
+            businessId: session.user.businessId,
+            name: "Main Godown",
+            isDefault: true
+          }
+        })
       }
       godownId = defaultGodown.id
     }
