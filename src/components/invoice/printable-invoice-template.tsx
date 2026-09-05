@@ -125,7 +125,7 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
       </div>
 
       {/* 2. Party Cards: BILL TO vs SHIP TO */}
-      <div className="grid grid-cols-2 gap-8 py-4 border-b border-gray-300 text-[11px]">
+      <div className={`grid ${invoice.shippingAddress ? "grid-cols-2" : "grid-cols-1"} gap-8 py-4 border-b border-gray-300 text-[11px]`}>
         {/* BILL TO */}
         <div>
           <div className="inline-block bg-[#eef0f3] text-gray-800 text-[10px] font-bold px-2.5 py-0.5 rounded mb-1.5 uppercase tracking-wider">
@@ -133,7 +133,7 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
           </div>
           <h3 className="font-extrabold text-[12px] text-gray-900 uppercase">{party.name}</h3>
           <p className="text-gray-700 mt-0.5 leading-snug whitespace-pre-wrap">
-            {invoice.billingAddress || party.billingAddress || "24/2014 1, ARTECH HOUSE, C.V Raman Pillai Road, Thycadu , Thiruvananthapuram, Kerala, 695014"}
+            {invoice.billingAddress || party.billingAddress || ""}
           </p>
           <div className="mt-1.5 space-y-0.5 text-gray-800">
             {party.mobileNumber && (
@@ -146,29 +146,29 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
                 <span className="font-bold">GSTIN :</span> {party.gstin}
               </p>
             )}
-            <p>
-              <span className="font-bold">PAN Number :</span> {party.gstin ? party.gstin.substring(2, 12) : "AAFCA6943G"}
-            </p>
+            {party.gstin && (
+              <p>
+                <span className="font-bold">PAN Number :</span> {party.gstin.substring(2, 12)}
+              </p>
+            )}
             <p>
               <span className="font-bold">Place of Supply :</span> Kerala
             </p>
           </div>
         </div>
 
-        {/* SHIP TO */}
-        <div>
-          <div className="inline-block bg-[#eef0f3] text-gray-800 text-[10px] font-bold px-2.5 py-0.5 rounded mb-1.5 uppercase tracking-wider">
-            SHIP TO
+        {/* SHIP TO — only shown if shipping address is set */}
+        {invoice.shippingAddress && (
+          <div>
+            <div className="inline-block bg-[#eef0f3] text-gray-800 text-[10px] font-bold px-2.5 py-0.5 rounded mb-1.5 uppercase tracking-wider">
+              SHIP TO
+            </div>
+            <h3 className="font-extrabold text-[12px] text-gray-900 uppercase">{party.name}</h3>
+            <p className="text-gray-700 mt-0.5 leading-snug whitespace-pre-wrap">
+              {invoice.shippingAddress}
+            </p>
           </div>
-          <h3 className="font-extrabold text-[12px] text-gray-900 uppercase">{party.name}</h3>
-          <p className="text-gray-700 mt-0.5 leading-snug whitespace-pre-wrap">
-            {invoice.shippingAddress || 
-              party.shippingAddress ||
-              invoice.billingAddress ||
-              party.billingAddress ||
-              "ALF- Elite Tower-A 199 Karikanal, WO-199, Thiruvananthapuram, Kerala, 695583"}
-          </p>
-        </div>
+        )}
       </div>
 
       {/* 3. Items Table */}

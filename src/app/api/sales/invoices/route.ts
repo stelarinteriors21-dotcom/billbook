@@ -18,6 +18,9 @@ const invoiceSchema = z.object({
   bankDetails: z.string().optional(),
   billingAddress: z.string().optional(),
   shippingAddress: z.string().optional(),
+  reference: z.string().optional(),
+  invoicePrefix: z.string().optional(),
+  invoiceNumber: z.string().optional(),
   lines: z.array(
     z.object({
       itemId: z.string(),
@@ -67,9 +70,15 @@ export async function POST(req: Request) {
 
     // 3. (Skipped account lookup since LedgerEntry uses accountName directly)
 
-    // 4. Generate Invoice Number (Simple sequential generation for MVP)
+    // 4. Generate Invoice Number – prefer what the user typed in the form
     const count = await db.invoice.count({ where: { businessId, type: InvoiceType.SALES } })
-    const invoiceNumber = `INV-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}`
+    const seq = count + 1
+    let invoicePrefix = parsed.invoicePrefix?.trim() || "INV"
+    // If user only typed a bare number, use it; otherwise combine prefix + number
+    const rawNum = parsed.invoiceNumber?.trim()
+    const invoiceNumber = rawNum
+      ? `${invoicePrefix}-${rawNum}`
+      : `${invoicePrefix}-${String(seq).padStart(4, "0")}`
 
     // 5. Transaction: Atomic Save
     const result = await db.$transaction(async (tx) => {
@@ -79,12 +88,14 @@ export async function POST(req: Request) {
           businessId,
           type: InvoiceType.SALES,
           invoiceNumber,
+          invoicePrefix: invoicePrefix,
           invoiceSequence: count + 1,
           partyId: parsed.partyId,
           date: new Date(parsed.invoiceDate),
           dueDate: parsed.dueDate ? new Date(parsed.dueDate) : undefined,
           billingAddress: parsed.billingAddress,
-          shippingAddress: parsed.shippingAddress,
+          shippingAddress: parsed.shippingAddress || null,
+          reference: parsed.reference || null,
           notes: parsed.notes,
           paymentTerms: parsed.paymentTerms,
           bankDetails: parsed.bankDetails,
