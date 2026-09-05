@@ -27,6 +27,7 @@ import { PartyCombobox } from "./party-combobox"
 import { CreatePartyModal } from "../party/create-party-modal"
 import { EditPartyModal } from "../party/edit-party-modal"
 import { CreateItemModal } from "../item/create-item-modal"
+import { EditItemModal } from "../item/edit-item-modal"
 import { AddItemsModal } from "./add-items-modal"
 import { QuickSettingsModal } from "./quick-settings-modal"
 import { PrintableInvoiceTemplate } from "./printable-invoice-template"
@@ -134,6 +135,7 @@ export function InvoiceForm({
   const [isPartyModalOpen, setIsPartyModalOpen] = React.useState(false)
   const [isEditPartyModalOpen, setIsEditPartyModalOpen] = React.useState(false)
   const [isItemModalOpen, setIsItemModalOpen] = React.useState(false)
+  const [editingItemId, setEditingItemId] = React.useState<string | null>(null)
   const [isAddItemsModalOpen, setIsAddItemsModalOpen] = React.useState(false)
   const [isBarcodeModalOpen, setIsBarcodeModalOpen] = React.useState(false)
   const [barcodeQuery, setBarcodeQuery] = React.useState("")
@@ -1263,8 +1265,29 @@ export function InvoiceForm({
           setIsAddItemsModalOpen(false)
           setIsItemModalOpen(true)
         }}
+        onEditItem={(id) => setEditingItemId(id)}
         onAddItems={handleAddItemsFromModal}
       />
+
+      {editingItemId && (
+        <EditItemModal
+          isOpen={true}
+          itemId={editingItemId}
+          onClose={() => setEditingItemId(null)}
+          taxRates={taxRates as any}
+          onSuccess={(updatedItem) => {
+            // Update line items if they contain this item
+            setLines(prev => prev.map(l => {
+              if (l.itemId !== updatedItem.id) return l
+              return {
+                ...l,
+                itemName: updatedItem.name,
+                taxRateId: updatedItem.taxRateId || l.taxRateId,
+              }
+            }))
+          }}
+        />
+      )}
 
       <QuickSettingsModal
         isOpen={quickSettingsTab !== null}

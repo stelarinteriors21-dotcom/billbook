@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Search, X, Plus } from "lucide-react"
+import { Search, X, Plus, Edit } from "lucide-react"
 
 interface Item {
   id: string
@@ -20,9 +20,10 @@ interface AddItemsModalProps {
   onAddItems: (items: Item[]) => void
   onSearch: (query: string) => Promise<Item[]>
   onCreateNew: () => void
+  onEditItem?: (id: string) => void
 }
 
-export function AddItemsModal({ isOpen, onClose, onAddItems, onSearch, onCreateNew }: AddItemsModalProps) {
+export function AddItemsModal({ isOpen, onClose, onAddItems, onSearch, onCreateNew, onEditItem }: AddItemsModalProps) {
   const [query, setQuery] = React.useState("")
   const [items, setItems] = React.useState<Item[]>([])
   const [selectedItems, setSelectedItems] = React.useState<Item[]>([])
@@ -131,13 +132,24 @@ export function AddItemsModal({ isOpen, onClose, onAddItems, onSearch, onCreateN
                       <td className="px-6 py-4 text-right font-medium">₹ {item.salesPrice.toLocaleString('en-IN')}</td>
                       <td className="px-6 py-4 text-right text-gray-600">₹ {item.purchasePrice.toLocaleString('en-IN')}</td>
                       <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => handleAddClick(item)}
-                          className="w-full bg-[#f0f6ff] hover:bg-blue-100 text-blue-600 border border-blue-200 font-medium py-1.5 rounded text-sm flex items-center justify-center gap-1 transition-colors"
-                        >
-                          <Plus className="h-4 w-4" /> Add
-                          {addedCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-200 rounded text-xs">{addedCount}</span>}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {onEditItem && (
+                            <button
+                              onClick={() => onEditItem(item.id)}
+                              className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded border border-transparent hover:border-purple-200 transition-colors"
+                              title="Edit Item"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleAddClick(item)}
+                            className="flex-1 bg-[#f0f6ff] hover:bg-blue-100 text-blue-600 border border-blue-200 font-medium py-1.5 rounded text-sm flex items-center justify-center gap-1 transition-colors"
+                          >
+                            <Plus className="h-4 w-4" /> Add
+                            {addedCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-200 rounded text-xs">{addedCount}</span>}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )
