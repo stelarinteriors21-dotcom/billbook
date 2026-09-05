@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Search, X, Plus, Edit } from "lucide-react"
+import { Search, X, Plus, Edit, Trash2 } from "lucide-react"
 
 interface Item {
   id: string
@@ -58,6 +58,23 @@ export function AddItemsModal({ isOpen, onClose, onAddItems, onSearch, onCreateN
   const handleAddToBill = () => {
     onAddItems(selectedItems)
     onClose()
+  }
+
+  const handleDelete = async (itemId: string) => {
+    if (!window.confirm("Are you sure you want to delete this item?")) return
+    try {
+      const res = await fetch(`/api/items/${itemId}`, { method: 'DELETE' })
+      const data = await res.json()
+      if (data.success) {
+        setItems(prev => prev.filter(i => i.id !== itemId))
+        // Also remove from selectedItems if they selected it before deleting
+        setSelectedItems(prev => prev.filter(i => i.id !== itemId))
+      } else {
+        alert(data.error || "Failed to delete item.")
+      }
+    } catch (e) {
+      alert("Network error. Could not delete.")
+    }
   }
 
   if (!isOpen) return null
@@ -142,6 +159,13 @@ export function AddItemsModal({ isOpen, onClose, onAddItems, onSearch, onCreateN
                               <Edit className="h-4 w-4" />
                             </button>
                           )}
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded border border-transparent hover:border-red-200 transition-colors"
+                            title="Delete Item"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                           <button
                             onClick={() => handleAddClick(item)}
                             className="flex-1 bg-[#f0f6ff] hover:bg-blue-100 text-blue-600 border border-blue-200 font-medium py-1.5 rounded text-sm flex items-center justify-center gap-1 transition-colors"

@@ -133,3 +133,45 @@ export async function PUT(
     return NextResponse.json({ error: error.message }, { status: 400 })
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.businessId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { id } = await params
+
+    // Check if item is used in any invoice
+    const usage = await db.invoiceLineItem.count({
+      where: { itemId: id }
+    })
+
+    if (usage > 0) {
+      return NextResponse.json(
+        { error: "Cannot delete item because it is used in existing invoices. You can only edit it." },
+        { status: 400 }
+      )
+    }
+
+    // We can safely delete it. First delete any stock movements
+    await db.stockMovement.deleteMany({
+      where: { itemId: id, businessId: session.user.businessId }
+    })
+
+    await db.item.delete({
+      where: {
+        id,
+        businessId: session.user.businessId,
+      }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 400 })
+  }
+}
