@@ -15,6 +15,7 @@ interface EditPartyModalProps {
     billingAddress?: string | null
     shippingAddress?: string | null
     gstin?: string | null
+    panNumber?: string | null
   } | null
   onSuccess: (updatedParty: any) => void
 }
