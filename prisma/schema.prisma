@@ -100,6 +100,7 @@ model Party {
   shippingAddress String?
   shippingName    String?
   gstin           String?
+  panNumber       String?
   creditLimit     Decimal?  @db.Decimal(15, 2)
   createdById     String
   createdAt       DateTime  @default(now())

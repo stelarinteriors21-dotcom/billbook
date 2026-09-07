@@ -145,6 +145,11 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
                 <span className="font-bold">GSTIN :</span> {party.gstin}
               </p>
             )}
+            {party.panNumber && (
+              <p>
+                <span className="font-bold">PAN :</span> {party.panNumber}
+              </p>
+            )}
             <p>
               <span className="font-bold">Place of Supply :</span> Kerala
             </p>

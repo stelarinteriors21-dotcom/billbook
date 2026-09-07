@@ -110,6 +110,7 @@ export async function GET(
         billingAddress: party.billingAddress,
         shippingAddress: party.shippingAddress,
         gstin: party.gstin,
+        panNumber: party.panNumber,
         creditLimit: party.creditLimit ? Number(party.creditLimit) : null,
         netBalance,
         totalSales,
@@ -149,6 +150,7 @@ export async function PUT(
         billingAddress: body.billingAddress,
         shippingAddress: body.shippingAddress,
         gstin: body.gstin,
+        panNumber: body.panNumber,
         creditLimit: body.creditLimit ? Number(body.creditLimit) : null,
       }
     })

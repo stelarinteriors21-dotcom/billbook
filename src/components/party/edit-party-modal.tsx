@@ -32,6 +32,7 @@ export function EditPartyModal({
   const [billingAddress, setBillingAddress] = React.useState("")
   const [shippingAddress, setShippingAddress] = React.useState("")
   const [gstin, setGstin] = React.useState("")
+  const [panNumber, setPanNumber] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [errorMsg, setErrorMsg] = React.useState("")
 
@@ -44,6 +45,7 @@ export function EditPartyModal({
       setBillingAddress(party.billingAddress || "")
       setShippingAddress(party.shippingAddress || "")
       setGstin(party.gstin || "")
+      setPanNumber(party.panNumber || "")
     }
   }, [party])
 
@@ -70,6 +72,7 @@ export function EditPartyModal({
           billingAddress: billingAddress.trim() || undefined,
           shippingAddress: shippingAddress.trim() || undefined,
           gstin: gstin.trim() || undefined,
+          panNumber: panNumber.trim() || undefined,
         }),
       })
 
@@ -149,6 +152,18 @@ export function EditPartyModal({
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#5c429e]"
                 value={gstin}
                 onChange={(e) => setGstin(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                PAN Number
+              </label>
+              <input
+                type="text"
+                placeholder="ABCDE1234F"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#5c429e]"
+                value={panNumber}
+                onChange={(e) => setPanNumber(e.target.value)}
               />
             </div>
           </div>

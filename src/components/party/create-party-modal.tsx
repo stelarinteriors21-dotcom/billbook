@@ -23,6 +23,7 @@ export function CreatePartyModal({
   const [billingAddress, setBillingAddress] = React.useState("")
   const [shippingAddress, setShippingAddress] = React.useState("")
   const [gstin, setGstin] = React.useState("")
+  const [panNumber, setPanNumber] = React.useState("")
   const [showAddress, setShowAddress] = React.useState(false)
   const [showGstin, setShowGstin] = React.useState(false)
 
@@ -52,6 +53,7 @@ export function CreatePartyModal({
           billingAddress: billingAddress.trim() || undefined,
           shippingAddress: shippingAddress.trim() || undefined,
           gstin: gstin.trim() || undefined,
+          panNumber: panNumber.trim() || undefined,
         }),
       })
 
@@ -64,6 +66,7 @@ export function CreatePartyModal({
         setBillingAddress("")
         setShippingAddress("")
         setGstin("")
+        setPanNumber("")
         onClose()
       } else {
         setErrorMsg(data.error || "Failed to create party")
@@ -215,17 +218,31 @@ export function CreatePartyModal({
                 + Add GSTIN (Optional)
               </button>
             ) : (
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                  GSTIN
-                </label>
-                <input
-                  type="text"
-                  placeholder="29ABCDE1234F1Z5"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#5c429e]"
-                  value={gstin}
-                  onChange={(e) => setGstin(e.target.value)}
-                />
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                    GSTIN
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="29ABCDE1234F1Z5"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#5c429e]"
+                    value={gstin}
+                    onChange={(e) => setGstin(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                    PAN Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ABCDE1234F"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#5c429e]"
+                    value={panNumber}
+                    onChange={(e) => setPanNumber(e.target.value)}
+                  />
+                </div>
               </div>
             )}
           </div>

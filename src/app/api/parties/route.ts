@@ -13,6 +13,7 @@ const partySchema = z.object({
   billingAddress: z.string().optional(),
   shippingAddress: z.string().optional(),
   gstin: z.string().optional(),
+  panNumber: z.string().optional(),
   creditLimit: z.number().optional(),
 })
 
@@ -86,6 +87,7 @@ export async function GET(req: Request) {
         billingAddress: party.billingAddress,
         shippingAddress: party.shippingAddress,
         gstin: party.gstin,
+        panNumber: party.panNumber,
         creditLimit: party.creditLimit ? Number(party.creditLimit) : null,
         balance,
         createdAt: party.createdAt,
