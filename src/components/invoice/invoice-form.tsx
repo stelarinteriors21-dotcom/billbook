@@ -90,6 +90,7 @@ export function InvoiceForm({
   const [partyShippingName, setPartyShippingName] = React.useState(initialData?.shippingName || initialData?.party?.shippingName || "")
   const [partyShippingAddress, setPartyShippingAddress] = React.useState(initialData?.shippingAddress || initialData?.party?.shippingAddress || "")
   const [partyGstin, setPartyGstin] = React.useState(initialData?.party?.gstin || "")
+  const [partyPanNumber, setPartyPanNumber] = React.useState(initialData?.party?.panNumber || "")
   const [showShippingAddress, setShowShippingAddress] = React.useState(!!initialData?.party?.shippingAddress)
 
   const [invoicePrefix, setInvoicePrefix] = React.useState(initialData?.invoicePrefix || "INV/STR-00")
@@ -192,6 +193,7 @@ export function InvoiceForm({
     setPartyShippingName(initialData.shippingName || initialData.party?.shippingName || "")
     setPartyShippingAddress(initialData.shippingAddress || initialData.party?.shippingAddress || "")
     setPartyGstin(initialData.party?.gstin || "")
+    setPartyPanNumber(initialData.party?.panNumber || "")
     setShowShippingAddress(!!(initialData.shippingAddress || initialData.party?.shippingAddress))
     setInvoicePrefix(initialData.invoicePrefix || "INV/STR-00")
     setInvoiceNumber(initialData.invoiceNumber || "20")
@@ -606,6 +608,7 @@ export function InvoiceForm({
                 billingAddress: partyBillingAddress || "",
                 shippingAddress: partyShippingAddress || partyBillingAddress || "",
                 gstin: partyGstin || "",
+                panNumber: partyPanNumber || "",
               },
               lines: lines.map((l) => ({
                 id: l.id,
@@ -647,9 +650,14 @@ export function InvoiceForm({
                 </label>
                 <PartyCombobox
                   value={partyName}
-                  onChange={(id, name) => {
+                  onChange={(id, name, p) => {
                     setPartyId(id)
                     setPartyName(name)
+                    setPartyBillingAddress(p.billingAddress || "")
+                    setPartyShippingAddress(p.shippingAddress || "")
+                    setPartyGstin(p.gstin || "")
+                    setPartyPanNumber(p.panNumber || "")
+                    setPartyShippingName(p.shippingName || p.name || "")
                   }}
                   onSearch={async (q) => {
                     const res = await searchParties(q)
@@ -660,6 +668,8 @@ export function InvoiceForm({
                       billingAddress: p.billingAddress,
                       shippingAddress: p.shippingAddress,
                       gstin: p.gstin,
+                      panNumber: p.panNumber,
+                      shippingName: p.shippingName,
                     }))
                   }}
                   onCreateNew={() => setIsPartyModalOpen(true)}
@@ -1235,6 +1245,7 @@ export function InvoiceForm({
           setPartyBillingAddress(party.billingAddress || "")
           setPartyShippingAddress(party.shippingAddress || "")
           setPartyGstin(party.gstin || "")
+          setPartyPanNumber(party.panNumber || "")
         }}
       />
 
@@ -1247,12 +1258,14 @@ export function InvoiceForm({
           billingAddress: partyBillingAddress,
           shippingAddress: partyShippingAddress,
           gstin: partyGstin,
+          panNumber: partyPanNumber,
         }}
         onSuccess={(updated) => {
           setPartyName(updated.name)
           setPartyBillingAddress(updated.billingAddress || "")
           setPartyShippingAddress(updated.shippingAddress || "")
           setPartyGstin(updated.gstin || "")
+          setPartyPanNumber(updated.panNumber || "")
         }}
       />
 

@@ -11,7 +11,7 @@ interface Party {
 
 interface PartyComboboxProps {
   value: string
-  onChange: (partyId: string, partyName: string) => void
+  onChange: (partyId: string, partyName: string, fullParty: any) => void
   onSearch: (query: string) => Promise<Party[]>
   onCreateNew: () => void
 }
@@ -101,7 +101,7 @@ export function PartyCombobox({ value, onChange, onSearch, onCreateNew }: PartyC
                   key={party.id}
                   className="flex justify-between items-center px-4 py-3 border-b border-gray-100 hover:bg-purple-50 cursor-pointer transition-colors"
                   onClick={() => {
-                    onChange(party.id, party.name)
+                    onChange(party.id, party.name, party)
                     setIsOpen(false)
                   }}
                 >
