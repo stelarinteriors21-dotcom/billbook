@@ -119,7 +119,7 @@ export async function PUT(
             // Clean up: if the sequence already starts with the prefix (with or without hyphen), strip it out
             if (p && n.startsWith(p + '-')) n = n.substring(p.length + 1);
             else if (p && n.startsWith(p)) n = n.substring(p.length);
-            return `${p}-${n}`;
+            return `${p}${n}`;
           })(),
           dueDate: dueDate ? new Date(dueDate) : existing.dueDate,
           lines: {

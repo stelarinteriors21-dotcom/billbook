@@ -41,6 +41,7 @@ interface InvoiceFormProps {
   initialData?: any
   isEdit?: boolean
   invoiceId?: string
+  nextSequence?: number
 }
 
 interface LineItemState {
@@ -65,6 +66,7 @@ export function InvoiceForm({
   initialData,
   isEdit = false,
   invoiceId,
+  nextSequence = 1,
 }: InvoiceFormProps) {
   const router = useRouter()
   const docLabels: Record<string, { title: string; returnPath: string; apiEndpoint: string }> = {
@@ -91,7 +93,7 @@ export function InvoiceForm({
 
   const [invoicePrefix, setInvoicePrefix] = React.useState(initialData?.invoicePrefix || "INV/STR-00")
   const [invoiceNumber, setInvoiceNumber] = React.useState(() => {
-    if (!initialData?.invoiceNumber) return "20"
+    if (!initialData?.invoiceNumber) return String(nextSequence)
     const p = initialData.invoicePrefix || ""
     let n = initialData.invoiceNumber
     if (p && n.startsWith(p + "-")) return n.substring(p.length + 1)

@@ -30,9 +30,14 @@ export default async function NewInvoicePage() {
     name: g.name
   }))
 
+  const invoiceCount = await db.invoice.count({
+    where: { businessId: session.user.businessId, type: "SALES" }
+  })
+  const nextSequence = invoiceCount + 1
+
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      <InvoiceForm taxRates={taxRates as any} godowns={godowns as any} />
+      <InvoiceForm taxRates={taxRates as any} godowns={godowns as any} nextSequence={nextSequence} />
     </div>
   )
 }

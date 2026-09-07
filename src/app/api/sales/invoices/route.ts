@@ -74,11 +74,11 @@ export async function POST(req: Request) {
     const count = await db.invoice.count({ where: { businessId, type: InvoiceType.SALES } })
     const seq = count + 1
     let invoicePrefix = parsed.invoicePrefix?.trim() || "INV"
-    // If user only typed a bare number, use it; otherwise combine prefix + number
+    // If user only typed a bare number, use it; otherwise combine prefix + number without a hyphen
     const rawNum = parsed.invoiceNumber?.trim()
     const invoiceNumber = rawNum
-      ? `${invoicePrefix}-${rawNum}`
-      : `${invoicePrefix}-${String(seq).padStart(4, "0")}`
+      ? `${invoicePrefix}${rawNum}`
+      : `${invoicePrefix}${String(seq).padStart(4, "0")}`
 
     // 5. Transaction: Atomic Save
     const result = await db.$transaction(async (tx) => {
