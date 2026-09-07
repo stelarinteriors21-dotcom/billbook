@@ -17,6 +17,7 @@ const invoiceSchema = z.object({
   paymentTerms: z.string().optional(),
   bankDetails: z.string().optional(),
   billingAddress: z.string().optional(),
+  shippingName: z.string().optional(),
   shippingAddress: z.string().optional(),
   reference: z.string().optional(),
   invoicePrefix: z.string().optional(),
