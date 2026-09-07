@@ -157,7 +157,9 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
             <div className="inline-block bg-[#eef0f3] text-gray-800 text-[10px] font-bold px-2.5 py-0.5 rounded mb-1.5 uppercase tracking-wider">
               SHIP TO
             </div>
-            <h3 className="font-extrabold text-[12px] text-gray-900 uppercase">{party.name}</h3>
+            <h3 className="font-extrabold text-[12px] text-gray-900 uppercase">
+              {invoice.shippingName || party.name}
+            </h3>
             <p className="text-gray-700 mt-0.5 leading-snug whitespace-pre-wrap">
               {invoice.shippingAddress}
             </p>

@@ -87,7 +87,8 @@ export function InvoiceForm({
   const [partyId, setPartyId] = React.useState(initialData?.partyId || initialData?.party?.id || "")
   const [partyName, setPartyName] = React.useState(initialData?.party?.name || "")
   const [partyBillingAddress, setPartyBillingAddress] = React.useState(initialData?.party?.billingAddress || "")
-  const [partyShippingAddress, setPartyShippingAddress] = React.useState(initialData?.party?.shippingAddress || "")
+  const [partyShippingName, setPartyShippingName] = React.useState(initialData?.shippingName || initialData?.party?.shippingName || "")
+  const [partyShippingAddress, setPartyShippingAddress] = React.useState(initialData?.shippingAddress || initialData?.party?.shippingAddress || "")
   const [partyGstin, setPartyGstin] = React.useState(initialData?.party?.gstin || "")
   const [showShippingAddress, setShowShippingAddress] = React.useState(!!initialData?.party?.shippingAddress)
 
@@ -187,10 +188,11 @@ export function InvoiceForm({
     if (!initialData) return
     setPartyId(initialData.partyId || initialData.party?.id || "")
     setPartyName(initialData.party?.name || "")
-    setPartyBillingAddress(initialData.party?.billingAddress || "")
-    setPartyShippingAddress(initialData.party?.shippingAddress || "")
+    setPartyBillingAddress(initialData.billingAddress || initialData.party?.billingAddress || "")
+    setPartyShippingName(initialData.shippingName || initialData.party?.shippingName || "")
+    setPartyShippingAddress(initialData.shippingAddress || initialData.party?.shippingAddress || "")
     setPartyGstin(initialData.party?.gstin || "")
-    setShowShippingAddress(!!initialData.party?.shippingAddress)
+    setShowShippingAddress(!!(initialData.shippingAddress || initialData.party?.shippingAddress))
     setInvoicePrefix(initialData.invoicePrefix || "INV/STR-00")
     setInvoiceNumber(initialData.invoiceNumber || "20")
     setInvoiceDate(initialData.date ? initialData.date.split("T")[0] : new Date().toISOString().split("T")[0])
@@ -474,6 +476,7 @@ export function InvoiceForm({
         invoicePrefix,
         invoiceNumber,
         billingAddress: partyBillingAddress,
+        shippingName: partyShippingName,
         shippingAddress: partyShippingAddress,
         discountAmount,
         roundOff: totals.roundOff,
@@ -712,6 +715,13 @@ export function InvoiceForm({
                             <option key={i} value={addr}>{addr.length > 60 ? addr.substring(0, 60) + '...' : addr}</option>
                           ))}
                         </select>
+                      <input
+                        type="text"
+                        placeholder="Shipping Name (defaults to Billed To Party)"
+                        value={partyShippingName}
+                        onChange={(e) => setPartyShippingName(e.target.value)}
+                        className="w-full border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#5c429e]"
+                      />
                       <textarea
                         rows={2}
                         placeholder="Enter consignee / shipping destination address..."

@@ -98,6 +98,7 @@ export async function POST(req: Request) {
           date: new Date(parsed.invoiceDate),
           dueDate: parsed.dueDate ? new Date(parsed.dueDate) : undefined,
           billingAddress: parsed.billingAddress,
+          shippingName: parsed.shippingName || null,
           shippingAddress: parsed.shippingAddress || null,
           reference: parsed.reference || null,
           notes: parsed.notes,

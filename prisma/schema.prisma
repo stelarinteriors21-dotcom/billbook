@@ -20,20 +20,20 @@ model Business {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users       BusinessUserRole[]
-  parties     Party[]
-  items       Item[]
-  categories  Category[]
-  units       Unit[]
-  taxRates    TaxRate[]
-  invoices    Invoice[]
-  payments    Payment[]
-  ledgers     LedgerEntry[]
-  godowns     Godown[]
-  stock       StockMovement[]
-  quotations  Quotation[]
-  challans    DeliveryChallan[]
-  auditLogs   AuditLog[]
+  users      BusinessUserRole[]
+  parties    Party[]
+  items      Item[]
+  categories Category[]
+  units      Unit[]
+  taxRates   TaxRate[]
+  invoices   Invoice[]
+  payments   Payment[]
+  ledgers    LedgerEntry[]
+  godowns    Godown[]
+  stock      StockMovement[]
+  quotations Quotation[]
+  challans   DeliveryChallan[]
+  auditLogs  AuditLog[]
 }
 
 model User {
@@ -44,25 +44,25 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  businesses BusinessUserRole[]
+  businesses        BusinessUserRole[]
   // Audit relations
-  createdParties      Party[]           @relation("PartyCreator")
-  createdItems        Item[]            @relation("ItemCreator")
-  createdInvoices     Invoice[]         @relation("InvoiceCreator")
-  createdPayments     Payment[]         @relation("PaymentCreator")
-  createdLedgers      LedgerEntry[]     @relation("LedgerCreator")
-  createdMovements    StockMovement[]   @relation("StockMovementCreator")
-  createdQuotations   Quotation[]       @relation("QuotationCreator")
-  createdChallans     DeliveryChallan[] @relation("ChallanCreator")
-  auditLogs           AuditLog[]
+  createdParties    Party[]            @relation("PartyCreator")
+  createdItems      Item[]             @relation("ItemCreator")
+  createdInvoices   Invoice[]          @relation("InvoiceCreator")
+  createdPayments   Payment[]          @relation("PaymentCreator")
+  createdLedgers    LedgerEntry[]      @relation("LedgerCreator")
+  createdMovements  StockMovement[]    @relation("StockMovementCreator")
+  createdQuotations Quotation[]        @relation("QuotationCreator")
+  createdChallans   DeliveryChallan[]  @relation("ChallanCreator")
+  auditLogs         AuditLog[]
 }
 
 model Role {
   id          String   @id @default(uuid())
   name        String   @unique // e.g., ADMIN, CASHIER, MANAGER
   permissions String[] // JSON or Array of permission strings
-  
-  users       BusinessUserRole[]
+
+  users BusinessUserRole[]
 }
 
 model BusinessUserRole {
@@ -72,9 +72,9 @@ model BusinessUserRole {
   roleId     String
   createdAt  DateTime @default(now())
 
-  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role       Role     @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     Role     @relation(fields: [roleId], references: [id], onDelete: Restrict)
 
   @@unique([businessId, userId])
   @@index([businessId])
@@ -90,26 +90,27 @@ enum PartyType {
 }
 
 model Party {
-  id             String    @id @default(uuid())
-  businessId     String
-  partyType      PartyType
-  name           String
-  mobileNumber   String?
-  email          String?
-  billingAddress String?
+  id              String    @id @default(uuid())
+  businessId      String
+  partyType       PartyType
+  name            String
+  mobileNumber    String?
+  email           String?
+  billingAddress  String?
   shippingAddress String?
-  gstin          String?
-  creditLimit    Decimal?  @db.Decimal(15, 2)
-  createdById    String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  shippingName    String?
+  gstin           String?
+  creditLimit     Decimal?  @db.Decimal(15, 2)
+  createdById     String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  business       Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  createdBy      User      @relation("PartyCreator", fields: [createdById], references: [id])
-  invoices       Invoice[]
-  payments       Payment[]
-  quotations     Quotation[]
-  challans       DeliveryChallan[]
+  business   Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  createdBy  User              @relation("PartyCreator", fields: [createdById], references: [id])
+  invoices   Invoice[]
+  payments   Payment[]
+  quotations Quotation[]
+  challans   DeliveryChallan[]
 
   @@index([businessId])
 }
@@ -120,32 +121,32 @@ enum ItemType {
 }
 
 model Item {
-  id           String    @id @default(uuid())
-  businessId   String
-  itemType     ItemType
-  name         String
-  hsnSac       String?
-  sku          String?
-  barcode      String?
-  salesPrice   Decimal   @default(0) @db.Decimal(15, 2)
+  id            String   @id @default(uuid())
+  businessId    String
+  itemType      ItemType
+  name          String
+  hsnSac        String?
+  sku           String?
+  barcode       String?
+  salesPrice    Decimal  @default(0) @db.Decimal(15, 2)
   purchasePrice Decimal  @default(0) @db.Decimal(15, 2)
-  categoryId   String?
-  unitId       String?
-  taxRateId    String?
-  createdById  String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  categoryId    String?
+  unitId        String?
+  taxRateId     String?
+  createdById   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  business     Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  category     Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  unit         Unit?     @relation(fields: [unitId], references: [id], onDelete: SetNull)
-  taxRate      TaxRate?  @relation(fields: [taxRateId], references: [id], onDelete: SetNull)
-  createdBy    User      @relation("ItemCreator", fields: [createdById], references: [id])
-  
-  invoiceLines      InvoiceLineItem[]
-  stockMovements    StockMovement[]
-  quotationLines    QuotationLineItem[]
-  challanLines      DeliveryChallanLineItem[]
+  business  Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  category  Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  unit      Unit?     @relation(fields: [unitId], references: [id], onDelete: SetNull)
+  taxRate   TaxRate?  @relation(fields: [taxRateId], references: [id], onDelete: SetNull)
+  createdBy User      @relation("ItemCreator", fields: [createdById], references: [id])
+
+  invoiceLines   InvoiceLineItem[]
+  stockMovements StockMovement[]
+  quotationLines QuotationLineItem[]
+  challanLines   DeliveryChallanLineItem[]
 
   @@index([businessId])
 }
@@ -155,33 +156,33 @@ model Category {
   businessId String
   name       String
   createdAt  DateTime @default(now())
-  
-  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  items      Item[]
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  items    Item[]
 
   @@unique([businessId, name])
 }
 
 model Unit {
-  id         String   @id @default(uuid())
+  id         String @id @default(uuid())
   businessId String
-  name       String   // e.g. "Pieces"
-  shortName  String   // e.g. "PCS"
-  
-  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  items      Item[]
+  name       String // e.g. "Pieces"
+  shortName  String // e.g. "PCS"
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  items    Item[]
 
   @@unique([businessId, shortName])
 }
 
 model TaxRate {
-  id         String   @id @default(uuid())
+  id         String  @id @default(uuid())
   businessId String
-  name       String   // e.g. "GST 18%"
-  rate       Decimal  @db.Decimal(5, 2) // e.g. 18.00
-  
-  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  items      Item[]
+  name       String // e.g. "GST 18%"
+  rate       Decimal @db.Decimal(5, 2) // e.g. 18.00
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  items    Item[]
 
   @@unique([businessId, name])
 }
@@ -207,69 +208,70 @@ enum InvoiceStatus {
 }
 
 model Invoice {
-  id              String        @id @default(uuid())
-  businessId      String
-  partyId         String
-  type            InvoiceType
-  status          InvoiceStatus @default(UNPAID)
-  
+  id         String        @id @default(uuid())
+  businessId String
+  partyId    String
+  type       InvoiceType
+  status     InvoiceStatus @default(UNPAID)
+
   invoicePrefix   String?
   invoiceSequence Int
-  invoiceNumber   String        // Derived or concatenated
+  invoiceNumber   String // Derived or concatenated
   date            DateTime
   dueDate         DateTime?
   paymentTerms    String?
-  reference       String?       // WO/RA/PO Number
+  reference       String? // WO/RA/PO Number
   billingAddress  String?
   shippingAddress String?
+  shippingName    String?
   notes           String?
   bankDetails     String?
-  
-  subTotal        Decimal       @db.Decimal(15, 2)
-  discountType    String?       // FLAT or PERCENTAGE
-  discountValue   Decimal       @default(0) @db.Decimal(15, 2)
-  totalDiscount   Decimal       @default(0) @db.Decimal(15, 2)
-  taxableAmount   Decimal       @default(0) @db.Decimal(15, 2)
-  totalTax        Decimal       @default(0) @db.Decimal(15, 2)
-  roundOff        Decimal       @default(0) @db.Decimal(15, 2)
-  grandTotal      Decimal       @db.Decimal(15, 2)
-  amountPaid      Decimal       @default(0) @db.Decimal(15, 2)
 
-  createdById     String
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  subTotal      Decimal @db.Decimal(15, 2)
+  discountType  String? // FLAT or PERCENTAGE
+  discountValue Decimal @default(0) @db.Decimal(15, 2)
+  totalDiscount Decimal @default(0) @db.Decimal(15, 2)
+  taxableAmount Decimal @default(0) @db.Decimal(15, 2)
+  totalTax      Decimal @default(0) @db.Decimal(15, 2)
+  roundOff      Decimal @default(0) @db.Decimal(15, 2)
+  grandTotal    Decimal @db.Decimal(15, 2)
+  amountPaid    Decimal @default(0) @db.Decimal(15, 2)
 
-  business        Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  party           Party         @relation(fields: [partyId], references: [id], onDelete: Restrict)
-  createdBy       User          @relation("InvoiceCreator", fields: [createdById], references: [id])
-  
-  lines           InvoiceLineItem[]
-  payments        Payment[]
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  party     Party    @relation(fields: [partyId], references: [id], onDelete: Restrict)
+  createdBy User     @relation("InvoiceCreator", fields: [createdById], references: [id])
+
+  lines    InvoiceLineItem[]
+  payments Payment[]
 
   @@unique([businessId, type, invoicePrefix, invoiceSequence])
   @@index([businessId, date])
 }
 
 model InvoiceLineItem {
-  id              String   @id @default(uuid())
-  invoiceId       String
-  itemId          String
-  quantity        Decimal  @db.Decimal(15, 4)
-  rate            Decimal  @db.Decimal(15, 2) // Snapshotted sales/purchase price
-  
-  discountType    String?  // FLAT or PERCENTAGE
-  discountValue   Decimal  @default(0) @db.Decimal(15, 2)
-  discountAmount  Decimal  @default(0) @db.Decimal(15, 2)
-  
-  taxableAmount   Decimal  @default(0) @db.Decimal(15, 2)
-  taxRateId       String?  // Snapshotted or linked
-  taxPercentage   Decimal  @default(0) @db.Decimal(5, 2) // Snapshotted
-  taxAmount       Decimal  @default(0) @db.Decimal(15, 2)
-  
-  total           Decimal  @db.Decimal(15, 2)
-  
-  invoice         Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  item            Item     @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  id        String  @id @default(uuid())
+  invoiceId String
+  itemId    String
+  quantity  Decimal @db.Decimal(15, 4)
+  rate      Decimal @db.Decimal(15, 2) // Snapshotted sales/purchase price
+
+  discountType   String? // FLAT or PERCENTAGE
+  discountValue  Decimal @default(0) @db.Decimal(15, 2)
+  discountAmount Decimal @default(0) @db.Decimal(15, 2)
+
+  taxableAmount Decimal @default(0) @db.Decimal(15, 2)
+  taxRateId     String? // Snapshotted or linked
+  taxPercentage Decimal @default(0) @db.Decimal(5, 2) // Snapshotted
+  taxAmount     Decimal @default(0) @db.Decimal(15, 2)
+
+  total Decimal @db.Decimal(15, 2)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Restrict)
 }
 
 enum PaymentMode {
@@ -289,15 +291,15 @@ model Payment {
   mode            PaymentMode
   referenceNumber String?
   notes           String?
-  
-  createdById     String
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
 
-  business        Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  party           Party       @relation(fields: [partyId], references: [id], onDelete: Restrict)
-  invoice         Invoice?    @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
-  createdBy       User        @relation("PaymentCreator", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  party     Party    @relation(fields: [partyId], references: [id], onDelete: Restrict)
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  createdBy User     @relation("PaymentCreator", fields: [createdById], references: [id])
 
   @@index([businessId, date])
 }
@@ -308,26 +310,26 @@ model Payment {
 
 // A simplified generic double-entry ledger for the MVP
 model LedgerEntry {
-  id              String   @id @default(uuid())
-  businessId      String
-  
-  // E.g., 'ACCOUNTS_RECEIVABLE', 'SALES_REVENUE', 'CASH', 'GST_OUTPUT'
-  accountName     String   
-  partyId         String?  // If it's a party sub-ledger
-  
-  debit           Decimal  @default(0) @db.Decimal(15, 2)
-  credit          Decimal  @default(0) @db.Decimal(15, 2)
-  
-  referenceType   String   // 'INVOICE', 'PAYMENT'
-  referenceId     String   // The ID of the document
-  date            DateTime
-  
-  createdById     String
-  createdAt       DateTime @default(now())
+  id         String @id @default(uuid())
+  businessId String
 
-  business        Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  createdBy       User     @relation("LedgerCreator", fields: [createdById], references: [id])
-  
+  // E.g., 'ACCOUNTS_RECEIVABLE', 'SALES_REVENUE', 'CASH', 'GST_OUTPUT'
+  accountName String
+  partyId     String? // If it's a party sub-ledger
+
+  debit  Decimal @default(0) @db.Decimal(15, 2)
+  credit Decimal @default(0) @db.Decimal(15, 2)
+
+  referenceType String // 'INVOICE', 'PAYMENT'
+  referenceId   String // The ID of the document
+  date          DateTime
+
+  createdById String
+  createdAt   DateTime @default(now())
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  createdBy User     @relation("LedgerCreator", fields: [createdById], references: [id])
+
   @@index([businessId, accountName])
   @@index([referenceType, referenceId])
 }
@@ -342,9 +344,9 @@ model Godown {
   name       String
   isDefault  Boolean  @default(false)
   createdAt  DateTime @default(now())
-  
-  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  movements  StockMovement[]
+
+  business  Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  movements StockMovement[]
 
   @@unique([businessId, name])
 }
@@ -356,30 +358,30 @@ enum MovementType {
 }
 
 model StockMovement {
-  id              String       @id @default(uuid())
-  businessId      String
-  itemId          String
-  godownId        String
-  
-  type            MovementType
-  quantity        Decimal      @db.Decimal(15, 4) // Always positive, type defines direction
-  
-  referenceType   String       // 'SALES_INVOICE', 'PURCHASE_INVOICE', 'MANUAL'
-  referenceId     String       // Document ID
-  date            DateTime
-  
-  // Future proofing fields
-  batchId         String?
-  serialNumber    String?
-  
-  createdById     String
-  createdAt       DateTime     @default(now())
+  id         String @id @default(uuid())
+  businessId String
+  itemId     String
+  godownId   String
 
-  business        Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  item            Item         @relation(fields: [itemId], references: [id], onDelete: Restrict)
-  godown          Godown       @relation(fields: [godownId], references: [id], onDelete: Restrict)
-  createdBy       User         @relation("StockMovementCreator", fields: [createdById], references: [id])
-  
+  type     MovementType
+  quantity Decimal      @db.Decimal(15, 4) // Always positive, type defines direction
+
+  referenceType String // 'SALES_INVOICE', 'PURCHASE_INVOICE', 'MANUAL'
+  referenceId   String // Document ID
+  date          DateTime
+
+  // Future proofing fields
+  batchId      String?
+  serialNumber String?
+
+  createdById String
+  createdAt   DateTime @default(now())
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  godown    Godown   @relation(fields: [godownId], references: [id], onDelete: Restrict)
+  createdBy User     @relation("StockMovementCreator", fields: [createdById], references: [id])
+
   @@index([businessId, itemId])
   @@index([referenceType, referenceId])
 }
@@ -389,54 +391,54 @@ model StockMovement {
 // ------------------------------------------------------
 
 model Quotation {
-  id              String        @id @default(uuid())
-  businessId      String
-  partyId         String
-  status          String        @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED, EXPIRED
-  
-  prefix          String?
-  sequence        Int
-  number          String
-  date            DateTime
-  expiryDate      DateTime?
-  reference       String?
-  notes           String?
-  
-  subTotal        Decimal       @db.Decimal(15, 2)
-  totalDiscount   Decimal       @default(0) @db.Decimal(15, 2)
-  totalTax        Decimal       @default(0) @db.Decimal(15, 2)
-  roundOff        Decimal       @default(0) @db.Decimal(15, 2)
-  grandTotal      Decimal       @db.Decimal(15, 2)
-  
-  convertedToInvoiceId String?
-  
-  createdById     String
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id         String @id @default(uuid())
+  businessId String
+  partyId    String
+  status     String @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED, EXPIRED
 
-  business        Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  party           Party         @relation(fields: [partyId], references: [id], onDelete: Restrict)
-  createdBy       User          @relation("QuotationCreator", fields: [createdById], references: [id])
-  lines           QuotationLineItem[]
+  prefix     String?
+  sequence   Int
+  number     String
+  date       DateTime
+  expiryDate DateTime?
+  reference  String?
+  notes      String?
+
+  subTotal      Decimal @db.Decimal(15, 2)
+  totalDiscount Decimal @default(0) @db.Decimal(15, 2)
+  totalTax      Decimal @default(0) @db.Decimal(15, 2)
+  roundOff      Decimal @default(0) @db.Decimal(15, 2)
+  grandTotal    Decimal @db.Decimal(15, 2)
+
+  convertedToInvoiceId String?
+
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business  Business            @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  party     Party               @relation(fields: [partyId], references: [id], onDelete: Restrict)
+  createdBy User                @relation("QuotationCreator", fields: [createdById], references: [id])
+  lines     QuotationLineItem[]
 
   @@unique([businessId, prefix, sequence])
   @@index([businessId])
 }
 
 model QuotationLineItem {
-  id              String    @id @default(uuid())
-  quotationId     String
-  itemId          String
-  quantity        Decimal   @db.Decimal(15, 4)
-  rate            Decimal   @db.Decimal(15, 2)
-  discountAmount  Decimal   @default(0) @db.Decimal(15, 2)
-  taxRateId       String?
-  taxPercentage   Decimal   @default(0) @db.Decimal(5, 2)
-  taxAmount       Decimal   @default(0) @db.Decimal(15, 2)
-  total           Decimal   @db.Decimal(15, 2)
+  id             String  @id @default(uuid())
+  quotationId    String
+  itemId         String
+  quantity       Decimal @db.Decimal(15, 4)
+  rate           Decimal @db.Decimal(15, 2)
+  discountAmount Decimal @default(0) @db.Decimal(15, 2)
+  taxRateId      String?
+  taxPercentage  Decimal @default(0) @db.Decimal(5, 2)
+  taxAmount      Decimal @default(0) @db.Decimal(15, 2)
+  total          Decimal @db.Decimal(15, 2)
 
-  quotation       Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
-  item            Item      @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Restrict)
 }
 
 // ------------------------------------------------------
@@ -444,11 +446,11 @@ model QuotationLineItem {
 // ------------------------------------------------------
 
 model DeliveryChallan {
-  id              String        @id @default(uuid())
-  businessId      String
-  partyId         String
-  status          String        @default("OPEN") // OPEN, CONVERTED, CANCELLED
-  
+  id         String @id @default(uuid())
+  businessId String
+  partyId    String
+  status     String @default("OPEN") // OPEN, CONVERTED, CANCELLED
+
   prefix          String?
   sequence        Int
   number          String
@@ -456,32 +458,32 @@ model DeliveryChallan {
   vehicleNumber   String?
   deliveryAddress String?
   notes           String?
-  
-  convertedToInvoiceId String?
-  
-  createdById     String
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
 
-  business        Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  party           Party         @relation(fields: [partyId], references: [id], onDelete: Restrict)
-  createdBy       User          @relation("ChallanCreator", fields: [createdById], references: [id])
-  lines           DeliveryChallanLineItem[]
+  convertedToInvoiceId String?
+
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business  Business                  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  party     Party                     @relation(fields: [partyId], references: [id], onDelete: Restrict)
+  createdBy User                      @relation("ChallanCreator", fields: [createdById], references: [id])
+  lines     DeliveryChallanLineItem[]
 
   @@unique([businessId, prefix, sequence])
   @@index([businessId])
 }
 
 model DeliveryChallanLineItem {
-  id              String          @id @default(uuid())
-  challanId       String
-  itemId          String
-  quantity        Decimal         @db.Decimal(15, 4)
-  rate            Decimal         @db.Decimal(15, 2)
-  total           Decimal         @db.Decimal(15, 2)
+  id        String  @id @default(uuid())
+  challanId String
+  itemId    String
+  quantity  Decimal @db.Decimal(15, 4)
+  rate      Decimal @db.Decimal(15, 2)
+  total     Decimal @db.Decimal(15, 2)
 
-  challan         DeliveryChallan @relation(fields: [challanId], references: [id], onDelete: Cascade)
-  item            Item            @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  challan DeliveryChallan @relation(fields: [challanId], references: [id], onDelete: Cascade)
+  item    Item            @relation(fields: [itemId], references: [id], onDelete: Restrict)
 }
 
 // ------------------------------------------------------
@@ -489,19 +491,18 @@ model DeliveryChallanLineItem {
 // ------------------------------------------------------
 
 model AuditLog {
-  id          String   @id @default(uuid())
-  businessId  String
-  userId      String
-  action      String   // CREATE, UPDATE, DELETE
-  entity      String   // INVOICE, PARTY, ITEM, etc.
-  entityId    String
-  changes     Json?    // Stores the old/new values
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  businessId String
+  userId     String
+  action     String // CREATE, UPDATE, DELETE
+  entity     String // INVOICE, PARTY, ITEM, etc.
+  entityId   String
+  changes    Json? // Stores the old/new values
+  createdAt  DateTime @default(now())
 
-  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@index([businessId, entity, entityId])
   @@index([businessId, createdAt])
 }
-

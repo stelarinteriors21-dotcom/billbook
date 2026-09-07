@@ -108,6 +108,7 @@ export async function PUT(
               : "UNPAID",
           reference: reference !== undefined ? reference : existing.reference,
           billingAddress: billingAddress !== undefined ? billingAddress : existing.billingAddress,
+          shippingName: body.shippingName !== undefined ? body.shippingName : existing.shippingName,
           shippingAddress: shippingAddress !== undefined ? shippingAddress : existing.shippingAddress,
           notes: notes !== undefined ? notes : existing.notes,
           paymentTerms: paymentTerms !== undefined ? paymentTerms : existing.paymentTerms,
