@@ -99,7 +99,7 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
                 <td className="font-semibold text-gray-700 pr-2 py-0.5">Invoice No.</td>
                 <td className="font-bold text-gray-900 pr-1">:</td>
                 <td className="font-bold text-gray-900 pl-2 text-right">
-                  {invoice.invoiceNumber || "INV/STR-0013"}
+                  {invoice.invoiceNumber || ""}
                 </td>
               </tr>
               <tr>
@@ -109,13 +109,15 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
                   {formatDate(invoice.date)}
                 </td>
               </tr>
-              <tr>
-                <td className="font-semibold text-gray-700 pr-2 py-0.5">WO/RA</td>
-                <td className="font-bold text-gray-900 pr-1">:</td>
-                <td className="font-medium text-gray-900 pl-2 text-right">
-                  {invoice.reference || "199/16"}
-                </td>
-              </tr>
+              {invoice.reference && (
+                <tr>
+                  <td className="font-semibold text-gray-700 pr-2 py-0.5">WO/RA</td>
+                  <td className="font-bold text-gray-900 pr-1">:</td>
+                  <td className="font-medium text-gray-900 pl-2 text-right">
+                    {invoice.reference}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

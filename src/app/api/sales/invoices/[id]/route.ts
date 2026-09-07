@@ -113,7 +113,9 @@ export async function PUT(
           paymentTerms: paymentTerms !== undefined ? paymentTerms : existing.paymentTerms,
           bankDetails: bankDetails !== undefined ? bankDetails : existing.bankDetails,
           invoicePrefix: invoicePrefix !== undefined ? invoicePrefix : existing.invoicePrefix,
-          invoiceNumber: invoiceNumber !== undefined ? invoiceNumber : existing.invoiceNumber,
+          invoiceNumber: (invoiceNumber !== undefined || invoicePrefix !== undefined)
+            ? `${invoicePrefix !== undefined ? invoicePrefix : existing.invoicePrefix}-${invoiceNumber !== undefined ? invoiceNumber : (existing.invoiceNumber.replace(`${existing.invoicePrefix}-`, '') || existing.invoiceNumber)}`
+            : existing.invoiceNumber,
           dueDate: dueDate ? new Date(dueDate) : existing.dueDate,
           lines: {
             create: lines.map((line: any, idx: number) => {
