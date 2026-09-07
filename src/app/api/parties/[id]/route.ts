@@ -149,8 +149,8 @@ export async function PUT(
         email: body.email === "" ? null : body.email,
         billingAddress: body.billingAddress,
         shippingAddress: body.shippingAddress,
-        gstin: body.gstin,
-        panNumber: body.panNumber,
+        gstin: body.gstin?.trim() || null,
+        panNumber: body.panNumber?.trim() || null,
         creditLimit: body.creditLimit ? Number(body.creditLimit) : null,
       }
     })

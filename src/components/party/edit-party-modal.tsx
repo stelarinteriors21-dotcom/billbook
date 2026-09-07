@@ -68,12 +68,12 @@ export function EditPartyModal({
         body: JSON.stringify({
           name: name.trim(),
           partyType,
-          mobileNumber: mobileNumber.trim() || undefined,
-          email: email.trim() || undefined,
-          billingAddress: billingAddress.trim() || undefined,
-          shippingAddress: shippingAddress.trim() || undefined,
-          gstin: gstin.trim() || undefined,
-          panNumber: panNumber.trim() || undefined,
+          mobileNumber: mobileNumber.trim() || "",
+          email: email.trim() || "",
+          billingAddress: billingAddress.trim() || "",
+          shippingAddress: shippingAddress.trim() || "",
+          gstin: gstin.trim() || "",
+          panNumber: panNumber.trim() || "",
         }),
       })
 
