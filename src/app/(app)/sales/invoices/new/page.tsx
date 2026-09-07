@@ -30,10 +30,12 @@ export default async function NewInvoicePage() {
     name: g.name
   }))
 
-  const invoiceCount = await db.invoice.count({
-    where: { businessId: session.user.businessId, type: "SALES" }
+  const lastInvoice = await db.invoice.findFirst({
+    where: { businessId: session.user.businessId, type: "SALES" },
+    orderBy: { invoiceSequence: 'desc' },
+    select: { invoiceSequence: true }
   })
-  const nextSequence = invoiceCount + 1
+  const nextSequence = (lastInvoice?.invoiceSequence || 0) + 1
 
   return (
     <div className="w-full h-full flex flex-col bg-white">

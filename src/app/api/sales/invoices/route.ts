@@ -71,8 +71,12 @@ export async function POST(req: Request) {
     // 3. (Skipped account lookup since LedgerEntry uses accountName directly)
 
     // 4. Generate Invoice Number – prefer what the user typed in the form
-    const count = await db.invoice.count({ where: { businessId, type: InvoiceType.SALES } })
-    const seq = count + 1
+    const lastInvoice = await db.invoice.findFirst({
+      where: { businessId, type: InvoiceType.SALES },
+      orderBy: { invoiceSequence: 'desc' },
+      select: { invoiceSequence: true }
+    })
+    const seq = (lastInvoice?.invoiceSequence || 0) + 1
     let invoicePrefix = parsed.invoicePrefix?.trim() || "INV"
     // If user only typed a bare number, use it; otherwise combine prefix + number without a hyphen
     const rawNum = parsed.invoiceNumber?.trim()
@@ -89,7 +93,7 @@ export async function POST(req: Request) {
           type: InvoiceType.SALES,
           invoiceNumber,
           invoicePrefix: invoicePrefix,
-          invoiceSequence: count + 1,
+          invoiceSequence: seq,
           partyId: parsed.partyId,
           date: new Date(parsed.invoiceDate),
           dueDate: parsed.dueDate ? new Date(parsed.dueDate) : undefined,
