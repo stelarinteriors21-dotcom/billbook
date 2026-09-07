@@ -93,10 +93,10 @@ export function InvoiceForm({
   const [invoiceNumber, setInvoiceNumber] = React.useState(() => {
     if (!initialData?.invoiceNumber) return "20"
     const p = initialData.invoicePrefix || ""
-    if (p && initialData.invoiceNumber.startsWith(p + "-")) {
-      return initialData.invoiceNumber.substring(p.length + 1)
-    }
-    return initialData.invoiceNumber
+    let n = initialData.invoiceNumber
+    if (p && n.startsWith(p + "-")) return n.substring(p.length + 1)
+    if (p && n.startsWith(p)) return n.substring(p.length)
+    return n
   })
   const [invoiceDate, setInvoiceDate] = React.useState(
     initialData?.date ? initialData.date.split("T")[0] : new Date().toISOString().split("T")[0]
