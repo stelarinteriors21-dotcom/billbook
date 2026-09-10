@@ -261,7 +261,8 @@ export function InvoiceForm({
   // Handlers
   const handleAddItemsFromModal = (items: any[]) => {
     const newLines = items.map((item) => {
-      const taxRatePercent = item.taxRate ? Number(item.taxRate.rate) : 0
+      const matchedTaxRate = item.taxRateId ? taxRates.find(t => t.id === item.taxRateId) : null
+      const taxRatePercent = item.taxRate ? Number(item.taxRate.rate) : (matchedTaxRate ? Number(matchedTaxRate.rate) : 0)
       const computed = calculateLineTotal({
         quantity: 1,
         rate: item.salesPrice,
