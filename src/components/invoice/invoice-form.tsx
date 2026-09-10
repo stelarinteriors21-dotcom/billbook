@@ -265,7 +265,7 @@ export function InvoiceForm({
       const taxRatePercent = item.taxRate ? Number(item.taxRate.rate) : (matchedTaxRate ? Number(matchedTaxRate.rate) : 0)
       const computed = calculateLineTotal({
         quantity: 1,
-        rate: item.salesPrice,
+        rate: Number(item.salesPrice),
         discountAmount: 0,
         taxRatePercent,
       })
@@ -274,7 +274,7 @@ export function InvoiceForm({
         itemId: item.id,
         itemName: item.name,
         quantity: 1,
-        rate: item.salesPrice,
+        rate: Number(item.salesPrice),
         discountAmount: 0,
         taxRateId: item.taxRateId || taxRates[0]?.id || "",
         taxRatePercent,
