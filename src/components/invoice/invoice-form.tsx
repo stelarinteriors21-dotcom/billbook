@@ -697,15 +697,49 @@ export function InvoiceForm({
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                       Shipped To (Delivery Address)
                     </span>
-                    {!showShippingAddress && (
-                      <button
-                        type="button"
-                        onClick={() => setShowShippingAddress(true)}
-                        className="text-xs text-blue-600 hover:underline font-semibold"
-                      >
-                        + Edit Shipping Address
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {showShippingAddress ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setShowShippingAddress(false)}
+                            className="text-[11px] text-gray-400 hover:text-gray-600"
+                          >
+                            Hide
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPartyShippingAddress("")
+                              setPartyShippingName("")
+                              setShowShippingAddress(false)
+                            }}
+                            className="text-[11px] text-red-400 hover:text-red-600 font-semibold"
+                          >
+                            ✕ Remove
+                          </button>
+                        </>
+                      ) : partyShippingAddress ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPartyShippingAddress("")
+                            setPartyShippingName("")
+                          }}
+                          className="text-[11px] text-red-400 hover:text-red-600 font-semibold"
+                        >
+                          ✕ Remove
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setShowShippingAddress(true)}
+                          className="text-xs text-blue-600 hover:underline font-semibold"
+                        >
+                          + Add Shipping Address
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {showShippingAddress ? (
@@ -739,19 +773,15 @@ export function InvoiceForm({
                         onChange={(e) => setPartyShippingAddress(e.target.value)}
                         className="w-full border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#5c429e] resize-none"
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowShippingAddress(false)}
-                        className="text-[11px] text-gray-400 hover:text-gray-600"
-                      >
-                        Hide details
-                      </button>
                     </div>
-                  ) : (
-                    <p className="text-xs text-gray-500 mt-1 truncate">
-                      {partyShippingAddress || partyBillingAddress || "Same as Billing Address"}
+                  ) : partyShippingAddress ? (
+                    <p
+                      className="text-xs text-gray-500 mt-1 truncate cursor-pointer hover:text-gray-700"
+                      onClick={() => setShowShippingAddress(true)}
+                    >
+                      {partyShippingAddress}
                     </p>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </div>
