@@ -76,7 +76,7 @@ export function PrintableInvoiceTemplate({ invoice }: PrintableInvoiceTemplatePr
                 <span className="font-bold">Email :</span> {companyEmail}
               </p>
               <p>
-                <span className="font-bold">stelar.in:</span> www.stelar.in
+                <span className="font-bold">Website :</span> www.stelar.in
               </p>
             </div>
           </div>
